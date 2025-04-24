@@ -110,7 +110,7 @@
     </div>
     <div class="flex flex-row">
       <Key
-        letter="enter"
+        letter="⏎"
         onclick={() => {
           if (text.length === 5) submit();
         }}
@@ -120,7 +120,7 @@
         <Key {letter} state={letters[letter]} bind:text={texts[row]} />
       {/each}
       <Key
-        letter="BKSPC"
+        letter="⌫"
         onclick={() => {
           if (text.length > 0) texts[row] = text.slice(0, -1);
         }}

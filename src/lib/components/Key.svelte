@@ -11,9 +11,11 @@
 
 <button
   class={`
-    m-1
+    m-0.5
     flex
-    h-16 ${onclick ? 'w-22' : 'w-14'}
+    sm:m-1
+    sm:h-16 ${onclick ? 'sm:w-22' : 'sm:w-14'}
+    h-8 ${onclick ? 'w-11' : 'w-7'}
     items-center justify-center
     rounded-sm
     ${state ? state.color : 'bg-gray-400'}
