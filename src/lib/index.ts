@@ -22,6 +22,17 @@ export class LetterState {
   toString() {
     return this.state;
   }
+
+  valueOf() {
+    switch (this.state) {
+      case 'absent':
+        return 0;
+      case 'present':
+        return 1;
+      case 'correct':
+        return 2;
+    }
+  }
 }
 
 export function random_index() {

@@ -49,8 +49,9 @@
     }
     for (let i = 0; i < text.length; i++) {
       const letter = text[i];
-      if (!letters[letter]) {
-        letters[letter] = letter_state(row, i) as LetterState;
+      const state = letter_state(row, i) as LetterState;
+      if (!letters[letter] || letters[letter] < state) {
+        letters[letter] = state;
       }
     }
     row++;
