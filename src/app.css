@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+
+button {
+  @apply my-1 cursor-pointer border-2 border-gray-400 px-2 hover:bg-gray-200 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-900;
+}
