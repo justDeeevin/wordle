@@ -15,7 +15,7 @@
     flex
     sm:m-1
     sm:h-16 ${onclick ? 'sm:w-22' : 'sm:w-14'}
-    h-8 ${onclick ? 'w-11' : 'w-7'}
+    h-10 ${onclick ? 'w-14' : 'w-9'}
     items-center justify-center
     rounded-sm
     ${state ? state.color : 'bg-gray-400'}
