@@ -2307,7 +2307,8 @@ export const answers = [
   'stalk',
   'flack',
   'widow',
-  'augur'
+  'augur',
+  'devin'
 ];
 
 const word_list = [
