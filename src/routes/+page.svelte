@@ -1,10 +1,11 @@
 <script lang="ts">
   import Letter from '$lib/components/Letter.svelte';
-  import { dev } from '$app/environment';
   import { answers, words } from '$lib/lists';
   import { random_index, LetterState } from '$lib';
   import Key from '$lib/components/Key.svelte';
+  import { page } from '$app/state';
 
+  const cheat = page.url.searchParams.has('cheat');
   let texts = $state(Array.from({ length: 6 }, () => ''));
   let row = $state(0);
   let text = $derived(texts[row].toLowerCase());
@@ -90,11 +91,8 @@
     {/each}
   </div>
 
-  {#if dev}
-    <div>
-      <input type="checkbox" bind:checked={show_answer} id="show_answer" class="cursor-pointer" />
-      <label for="show_answer" class="cursor-pointer">Show Answer</label>
-    </div>
+  {#if cheat}
+    <button onclick={() => (show_answer = true)}>Show answer</button>
   {/if}
   {#if show_answer}
     <p class="text-lg">The word was {word.toUpperCase()}</p>
