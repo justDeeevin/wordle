@@ -1,5 +1,6 @@
 <script lang="ts">
   import Letter from '$lib/components/Letter.svelte';
+  import { dev } from '$app/environment';
   import { answers, words } from '$lib/lists';
   import { random_index, LetterState } from '$lib';
   import Key from '$lib/components/Key.svelte';
@@ -84,16 +85,17 @@
     {/each}
   </div>
 
-  <div class="mx-1">
-    <input type="checkbox" bind:checked={show_answer} id="show_answer" class="cursor-pointer" />
-    <label for="show_answer" class="cursor-pointer">Show Answer</label>
+  {#if dev}
+    <div>
+      <input type="checkbox" bind:checked={show_answer} id="show_answer" class="cursor-pointer" />
+      <label for="show_answer" class="cursor-pointer">Show Answer</label>
+    </div>
     {#if show_answer}
       <p>{word}</p>
-    {:else}
-      <br />
     {/if}
-    <button onclick={new_game}>New game</button>
-  </div>
+  {/if}
+
+  <button onclick={new_game}>New game</button>
 
   <div class="fixed bottom-0 flex w-full flex-col items-center justify-center">
     <div class="flex flex-row">
