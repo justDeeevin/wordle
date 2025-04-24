@@ -97,6 +97,8 @@
 
   <button onclick={new_game}>New game</button>
 
+  <p class="text-center text-lg">Word is randomly selected on each new game</p>
+
   <div class="fixed bottom-0 flex w-full flex-col items-center justify-center">
     <div class="flex flex-row">
       {#each 'qwertyuiop' as letter}
