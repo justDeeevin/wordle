@@ -36,6 +36,7 @@
     end = false;
     index = random_index();
     letters = {};
+    show_answer = false;
   }
 
   function submit() {
@@ -44,8 +45,11 @@
       window.alert('Invalid word');
       return;
     }
-    if (text === word) {
+    if (text === word || row === 5) {
       end = true;
+    }
+    if (text !== word && row === 5) {
+      show_answer = true;
     }
     for (let i = 0; i < text.length; i++) {
       const letter = text[i];
@@ -91,9 +95,9 @@
       <input type="checkbox" bind:checked={show_answer} id="show_answer" class="cursor-pointer" />
       <label for="show_answer" class="cursor-pointer">Show Answer</label>
     </div>
-    {#if show_answer}
-      <p>{word}</p>
-    {/if}
+  {/if}
+  {#if show_answer}
+    <p class="text-lg">The word was {word.toUpperCase()}</p>
   {/if}
 
   <button onclick={new_game}>New game</button>
