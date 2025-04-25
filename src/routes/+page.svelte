@@ -1,39 +1,42 @@
 <script lang="ts">
   import Letter from '$lib/components/Letter.svelte';
+  import Key from '$lib/components/Key.svelte';
+
   import { answers, words } from '$lib/lists';
   import { random_index, LetterState } from '$lib';
-  import Key from '$lib/components/Key.svelte';
   import { page } from '$app/state';
 
   const cheat = page.url.searchParams.has('cheat');
-  let texts = $state(Array.from({ length: 6 }, () => ''));
-  let row = $state(0);
-  let text = $derived(texts[row].toLowerCase());
-  let input: HTMLInputElement;
+
+  let texts: string[] = $state(Array(6).fill(''));
+  let current_row = $state(0);
   let end = $state(false);
   let index = $state(random_index());
-  let word = $derived(answers[index]);
   let show_answer = $state(false);
   let letters: { [key: string]: LetterState } = $state({});
 
+  let text = $derived(texts[current_row].toLowerCase());
+  let word = $derived(answers[index]);
+
+  let input: HTMLInputElement;
+
   function letter_state(row: number, l: number): LetterState | undefined {
     const input = texts[row];
-    const letter = input[l];
-    if (!letter) {
-      return undefined;
-    }
-    if (letter === word[l]) return new LetterState('correct');
+    const letter: string | undefined = input[l];
+
+    if (!letter) return undefined;
+    else if (letter === word[l]) return new LetterState('correct');
     else if (
       word.search(letter) !== -1 &&
-      (input.split(letter).length - 1 === 1 || input.search(letter) == l)
+      (input.split(letter).length - 1 === 1 || input.search(letter) === l)
     )
       return new LetterState('present');
     else return new LetterState('absent');
   }
 
   function new_game() {
-    row = 0;
-    texts = Array.from({ length: 6 }, () => '');
+    current_row = 0;
+    texts = Array(6).fill('');
     end = false;
     index = random_index();
     letters = {};
@@ -41,35 +44,34 @@
   }
 
   function submit() {
-    console.log('submitted');
     if (!words.has(text)) {
       window.alert('Invalid word');
       return;
-    }
-    if (text === word || row === 5) {
+    } else if (text === word || current_row === 5) {
       end = true;
-    }
-    if (text !== word && row === 5) {
+    } else if (text !== word && current_row === 5) {
       show_answer = true;
     }
+
     for (let i = 0; i < text.length; i++) {
       const letter = text[i];
-      const state = letter_state(row, i) as LetterState;
+      const state = letter_state(current_row, i) as LetterState;
       if (!letters[letter] || letters[letter] < state) {
         letters[letter] = state;
       }
     }
-    row++;
+
+    current_row++;
   }
 </script>
 
 <svelte:window onkeydown={() => input.focus()} />
 
 <input
-  bind:value={texts[row]}
-  maxlength="5"
+  bind:value={texts[current_row]}
+  maxlength={5}
   disabled={end}
-  oninput={() => (texts[row] = text.replace(/[^a-zA-Z]/g, ''))}
+  oninput={() => (texts[current_row] = text.replace(/[^a-zA-Z]/g, ''))}
   onkeydown={(e) => {
     if (e.key === 'Enter' && text.length === 5) submit();
   }}
@@ -78,18 +80,16 @@
 />
 
 <div class="flex flex-col items-center justify-center">
-  <div class="flex flex-col">
-    {#each Array(6) as _, this_row}
-      <div class="flex flex-row">
-        {#each Array(5) as _, l}
-          <Letter
-            letter={texts[this_row][l]}
-            state={row > this_row ? letter_state(this_row, l) : undefined}
-          />
-        {/each}
-      </div>
-    {/each}
-  </div>
+  {#each Array(6) as _, row}
+    <div class="flex flex-row">
+      {#each Array(5) as _, l}
+        <Letter
+          letter={texts[row][l]}
+          state={current_row > row ? letter_state(row, l) : undefined}
+        />
+      {/each}
+    </div>
+  {/each}
 
   {#if cheat}
     <button onclick={() => (show_answer = true)}>Show answer</button>
@@ -105,12 +105,12 @@
   <div class="fixed bottom-0 flex w-full flex-col items-center justify-center">
     <div class="flex flex-row">
       {#each 'qwertyuiop' as letter}
-        <Key {letter} state={letters[letter]} bind:text={texts[row]} disabled={end} />
+        <Key {letter} state={letters[letter]} bind:text={texts[current_row]} disabled={end} />
       {/each}
     </div>
     <div class="flex flex-row">
       {#each 'asdfghjkl' as letter}
-        <Key {letter} state={letters[letter]} bind:text={texts[row]} disabled={end} />
+        <Key {letter} state={letters[letter]} bind:text={texts[current_row]} disabled={end} />
       {/each}
     </div>
     <div class="flex flex-row">
@@ -123,12 +123,12 @@
         disabled={end}
       />
       {#each 'zxcvbnm' as letter}
-        <Key {letter} state={letters[letter]} bind:text={texts[row]} disabled={end} />
+        <Key {letter} state={letters[letter]} bind:text={texts[current_row]} disabled={end} />
       {/each}
       <Key
         letter="⌫"
         onclick={() => {
-          if (text.length > 0) texts[row] = text.slice(0, -1);
+          if (text.length > 0) texts[current_row] = text.slice(0, -1);
         }}
         text=""
         disabled={end}
