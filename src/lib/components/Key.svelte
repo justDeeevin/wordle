@@ -5,8 +5,15 @@
     letter,
     state,
     text = $bindable(),
-    onclick
-  }: { letter?: string; state?: LetterState; text: string; onclick?: () => void } = $props();
+    onclick,
+    disabled = false
+  }: {
+    letter?: string;
+    state?: LetterState;
+    text: string;
+    onclick?: () => void;
+    disabled?: boolean;
+  } = $props();
 </script>
 
 <button
@@ -25,6 +32,7 @@
     (() => {
       if (text.length < 5) text += letter;
     })}
+  {disabled}
 >
   {letter?.toUpperCase()}
 </button>

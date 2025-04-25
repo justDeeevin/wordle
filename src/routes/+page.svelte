@@ -105,12 +105,12 @@
   <div class="fixed bottom-0 flex w-full flex-col items-center justify-center">
     <div class="flex flex-row">
       {#each 'qwertyuiop' as letter}
-        <Key {letter} state={letters[letter]} bind:text={texts[row]} />
+        <Key {letter} state={letters[letter]} bind:text={texts[row]} disabled={end} />
       {/each}
     </div>
     <div class="flex flex-row">
       {#each 'asdfghjkl' as letter}
-        <Key {letter} state={letters[letter]} bind:text={texts[row]} />
+        <Key {letter} state={letters[letter]} bind:text={texts[row]} disabled={end} />
       {/each}
     </div>
     <div class="flex flex-row">
@@ -120,9 +120,10 @@
           if (text.length === 5) submit();
         }}
         text=""
+        disabled={end}
       />
       {#each 'zxcvbnm' as letter}
-        <Key {letter} state={letters[letter]} bind:text={texts[row]} />
+        <Key {letter} state={letters[letter]} bind:text={texts[row]} disabled={end} />
       {/each}
       <Key
         letter="⌫"
@@ -130,6 +131,7 @@
           if (text.length > 0) texts[row] = text.slice(0, -1);
         }}
         text=""
+        disabled={end}
       />
     </div>
   </div>
