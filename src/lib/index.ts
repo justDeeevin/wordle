@@ -19,6 +19,17 @@ export class LetterState {
     }
   }
 
+  get emoji() {
+    switch (this.state) {
+      case 'absent':
+        return '⬛';
+      case 'present':
+        return '🟨';
+      case 'correct':
+        return '🟩';
+    }
+  }
+
   toString() {
     return this.state;
   }

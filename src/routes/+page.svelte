@@ -17,6 +17,7 @@
 
   let text = $derived(texts[current_row].toLowerCase());
   let word = $derived(answers[index]);
+  let win = $derived(end && texts[current_row - 1] === word);
 
   let input: HTMLInputElement;
 
@@ -70,6 +71,13 @@
 
     current_row++;
   }
+
+  function emojis(): string {
+    return texts
+      .map((t, r) => [...t].map((_, c) => letter_state(r, c)?.emoji).join(''))
+      .join('\n')
+      .trim();
+  }
 </script>
 
 <svelte:window onkeydown={() => input.focus()} />
@@ -101,13 +109,20 @@
   {#if cheat}
     <button onclick={() => (show_answer = true)}>Show answer</button>
   {/if}
-  {#if show_answer || end}
+  {#if show_answer || (end && !win)}
     <p class="text-lg">The word was {word.toUpperCase()}</p>
   {/if}
 
   <button onclick={new_game}>New game</button>
 
   <p class="text-center text-lg">Word is randomly selected on each new game</p>
+
+  {#if win}
+    <p class="m-2 text-xl">Congrats!</p>
+    <button onclick={() => navigator.clipboard.writeText(emojis())}
+      >Share (copies to clipboard)</button
+    >
+  {/if}
 
   <div class="fixed bottom-0 flex w-full flex-col items-center justify-center">
     <div class="flex flex-row">
