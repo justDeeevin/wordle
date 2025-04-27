@@ -49,7 +49,9 @@
       return;
     } else if (text === word || current_row === 5) {
       end = true;
-    } else if (text !== word && current_row === 5) {
+    }
+
+    if (text !== word && current_row === 5) {
       show_answer = true;
     }
 
