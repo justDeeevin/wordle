@@ -28,10 +28,15 @@
     else if (letter === word[l]) return new LetterState('correct');
     else if (
       word.search(letter) !== -1 &&
-      (input.split(letter).length - 1 === 1 || input.search(letter) === l)
+      count_letter(word, letter) >= count_letter(input, letter)
     )
       return new LetterState('present');
     else return new LetterState('absent');
+  }
+
+  /** Counts the number of times the `letter` appears in the `string` */
+  function count_letter(string: string, letter: string): number {
+    return string.split(letter).length - 1;
   }
 
   function new_game() {
