@@ -101,7 +101,7 @@
   {#if cheat}
     <button onclick={() => (show_answer = true)}>Show answer</button>
   {/if}
-  {#if show_answer}
+  {#if show_answer || end}
     <p class="text-lg">The word was {word.toUpperCase()}</p>
   {/if}
 
