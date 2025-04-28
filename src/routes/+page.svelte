@@ -9,44 +9,34 @@
   const cheat = page.url.searchParams.has('cheat');
 
   let texts: string[] = $state(Array(6).fill(''));
+  let states: LetterState[][] = $state(Array.from({ length: 6 }, () => []));
   let current_row = $state(0);
   let end = $state(false);
   let index = $state(random_index());
   let show_answer = $state(false);
-  let letters: { [key: string]: LetterState } = $state({});
 
   const text = $derived(texts[current_row].toLowerCase());
   const word = $derived(answers[index]);
   const win = $derived(end && texts[current_row - 1] === word);
+  const letters = $derived(
+    states.flat().reduce((set: { [letter: string]: LetterState | undefined }, state, i) => {
+      const letter = texts.map((t) => [...t]).flat()[i];
+
+      if (!set[letter] || set[letter] < state) set[letter] = state;
+
+      return set;
+    }, {})
+  );
 
   let input: HTMLInputElement;
-
-  function letter_state(row: number, l: number): LetterState | undefined {
-    const input = texts[row];
-    const letter: string | undefined = input[l];
-
-    if (!letter) return undefined;
-    else if (letter === word[l]) return new LetterState('correct');
-    else if (
-      word.search(letter) !== -1 &&
-      count_letter(word, letter) >= count_letter(input, letter)
-    )
-      return new LetterState('present');
-    else return new LetterState('absent');
-  }
-
-  /** Counts the number of times the `letter` appears in the `string` */
-  function count_letter(string: string, letter: string): number {
-    return string.split(letter).length - 1;
-  }
 
   function new_game() {
     current_row = 0;
     texts = Array(6).fill('');
     end = false;
     index = random_index();
-    letters = {};
     show_answer = false;
+    states = [[]];
   }
 
   function submit() {
@@ -61,20 +51,33 @@
       show_answer = true;
     }
 
-    for (let i = 0; i < text.length; i++) {
-      const letter = text[i];
-      const state = letter_state(current_row, i) as LetterState;
-      if (!letters[letter] || letters[letter] < state) {
-        letters[letter] = state;
+    let temp = [...text].map((letter, i) => {
+      if (letter === word[i]) return new LetterState('correct');
+      else if (word.search(letter) !== -1) return new LetterState('present');
+      else return new LetterState('absent');
+    });
+
+    for (const i_str in temp) {
+      const i = i_str as unknown as number;
+      const s = temp[i];
+      if (
+        s.toString() === new LetterState('present').toString() &&
+        temp.filter((check, check_i) => check_i !== i && text[check_i] === text[i] && check >= s)
+          .length >
+          word.split(text[i]).length - 1
+      ) {
+        temp[i] = new LetterState('absent');
       }
     }
+
+    states[current_row] = temp;
 
     current_row++;
   }
 
   function emojis(): string {
     return texts
-      .map((t, r) => [...t].map((_, c) => letter_state(r, c)?.emoji).join(''))
+      .map((t, r) => [...t].map((_, c) => states[r][c].emoji).join(''))
       .join('\n')
       .trim();
   }
@@ -98,10 +101,7 @@
   {#each Array(6) as _, row}
     <div class="flex flex-row">
       {#each Array(5) as _, l}
-        <Letter
-          letter={texts[row][l]}
-          state={current_row > row ? letter_state(row, l) : undefined}
-        />
+        <Letter letter={texts[row][l]} state={current_row > row ? states[row][l] : undefined} />
       {/each}
     </div>
   {/each}
