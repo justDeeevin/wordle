@@ -75,11 +75,22 @@
     current_row++;
   }
 
-  function emojis(): string {
-    return texts
+  function share() {
+    const emojis = texts
+      .filter((t) => !!t)
       .map((t, r) => [...t].map((_, c) => states[r][c].emoji).join(''))
+      .map((l) => `<p>${l}</p>`)
       .join('\n')
       .trim();
+    const container = document.createElement('div');
+    container.innerHTML = `<p>justDeeevin wordle (word = ${word.toUpperCase()})${cheat ? ' (cheat mode ENABLED)' : ''}</p>\n\n${emojis}\n\n<p>play 👉 <a href="https://wordle.justdeeevin.dev">https://wordle.justdeeevin.dev</a></p>`;
+
+    let item = new ClipboardItem({
+      'text/html': container.innerHTML,
+      'text/plain': container.innerText
+    });
+
+    navigator.clipboard.write([item]);
   }
 </script>
 
@@ -109,19 +120,18 @@
   {#if cheat}
     <button onclick={() => (show_answer = true)}>Show answer</button>
   {/if}
-  {#if show_answer || (end && !win)}
-    <p class="text-lg">The word was {word.toUpperCase()}</p>
-  {/if}
 
   <button onclick={new_game}>New game</button>
 
   <p class="text-center text-lg">Word is randomly selected on each new game</p>
 
+  {#if show_answer || (end && !win)}
+    <p class="text-lg">The word was {word.toUpperCase()}</p>
+  {/if}
+
   {#if win}
     <p class="m-2 text-xl">Congrats!</p>
-    <button onclick={() => navigator.clipboard.writeText(emojis())}
-      >Share (copies to clipboard)</button
-    >
+    <button onclick={share}>Share (copies to clipboard)</button>
   {/if}
 
   <div class="fixed bottom-0 flex w-full flex-col items-center justify-center">
