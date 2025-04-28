@@ -15,9 +15,9 @@
   let show_answer = $state(false);
   let letters: { [key: string]: LetterState } = $state({});
 
-  let text = $derived(texts[current_row].toLowerCase());
-  let word = $derived(answers[index]);
-  let win = $derived(end && texts[current_row - 1] === word);
+  const text = $derived(texts[current_row].toLowerCase());
+  const word = $derived(answers[index]);
+  const win = $derived(end && texts[current_row - 1] === word);
 
   let input: HTMLInputElement;
 
